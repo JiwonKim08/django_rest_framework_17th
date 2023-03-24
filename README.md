@@ -1,1 +1,2 @@
-# django_rest_framework_17th
+# CEOS 17기 백엔드 스터디
+
