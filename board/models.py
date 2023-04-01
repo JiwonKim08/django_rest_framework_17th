@@ -51,7 +51,8 @@ class Comment(CommonInfo):
     like_cnt = models.PositiveIntegerField("좋아요 수")
 
     def __str__(self):
-        return 'comment_content: {}'.format(self.commentcontent)
+        return 'comment_content: {}'.format(self.commentcontent[:10])
+
 
 class Message_room(CommonInfo):
     sender_id = models.ForeignKey(User, on_delete=models.CASCADE,related_name='senderId')
