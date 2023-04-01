@@ -9,7 +9,7 @@ class Board(CommonInfo):
     bookmark = models.CharField("즐겨찾기", max_length=20)
 
     def __str__(self):
-        return 'school_id: {}, boardname: {}'.format(self.school_id, self.boardname)
+        return 'school_id: {}, boardname: {}'.format(self.school_id, self.name)
 
 
 class Fixed_board(CommonInfo):
