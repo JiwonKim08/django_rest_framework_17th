@@ -9,26 +9,22 @@ class Lecture(CommonInfo):
     professor = models.CharField("교수 성함", max_length=20)
     classroom = models.CharField("수업실", max_length=20)
     credit = models.PositiveIntegerField("학수번호")
-    time = models.DateTimeField("수업 시간", default=datetime.now())
-    day = models.CharField("수업 날짜", max_length=20)
+    time = models.CharField(max_length=255) #요일 및 시간
 
     def __str__(self):
-        return '{} : {}'.format(self.name, self.professor, self.classroom)
+        return '{} of {} naming {}'.format(self.name, self.professor, self.classroom)
 
-class My_lecture(CommonInfo):
+class Timetable(CommonInfo):
     user_id = models.ForeignKey(User, on_delete=models.CASCADE, related_name='mylectureuserId')
     lecture_id = models.ForeignKey(Lecture, on_delete=models.CASCADE, related_name='mylectureId')
     is_show = models.BooleanField("친구 공개 여부", default=False)
-    grade = models.IntegerField("점수")
 
     def __str__(self):
-        return '{}'.format(self.grade)
+        return '{}'.format(self.user_id.name, self.lecture_id.name)
 
-class Lecture_enrollment(CommonInfo):
-    timetable_id = models.ForeignKey(My_lecture, on_delete=models.CASCADE, related_name='lectureenrollmentId')
 
 class Review(CommonInfo):
-    timetable_id = models.ForeignKey(My_lecture, on_delete=models.CASCADE,related_name='reviewId')
+    timetable_id = models.ForeignKey(Timetable, on_delete=models.CASCADE,related_name='reviewId')
     content = models.CharField("리뷰 내용", max_length=200)
 
     def __str__(self):

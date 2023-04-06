@@ -9,6 +9,9 @@ class CommonInfo(models.Model):
     updated_at = models.DateTimeField(auto_now=True) #수정 시간
     deleted_at = models.DateTimeField(null=True) #삭제 시간
 
+
+     #현수님 코드를 보며 댓글-대댓글 삭제여부에 대한 고민을 하게되었다.
+
     #상속 허용
     class Meta:
         abstract = True
@@ -60,7 +63,6 @@ class User(AbstractBaseUser):
     school_id = models.ForeignKey(School, on_delete=models.CASCADE, related_name='schoolId') # 외래키 자동생성
     user_id = models.CharField("사용자 계정", max_length=20, unique=True)
     email = models.EmailField("이메일", max_length=255, unique=True)
-    password = models.CharField("비밀번호", max_length=128)  # 해시되기 때문에 max_length가 길어야함
     profile_image = models.URLField(default="")  # url 형태로 저장하는게 더 좋음
     nickname = models.CharField("닉네임", max_length=20, unique=True)
     fullname = models.CharField("이름", max_length=20)
@@ -86,12 +88,12 @@ class User(AbstractBaseUser):
     #   db_table = ""
 
     # 어드민 페이지에서 데이터에 제목을 어떻게 붙여줄 것인지 지정
-    def __Str__(self):
+    def __str__(self):
         return f"{self.username} / {self.email} 님의 계정입니다"
 
 
 class Freind(CommonInfo):
-    follower_id = models.ForeignKey(User, on_delete=models.CASCADE, related_name='followerId',primary_key=True,)
+    follower_id = models.ForeignKey(User, on_delete=models.CASCADE, related_name='followerId',primary_key=True)
     followee_id = models.ForeignKey(User, on_delete=models.CASCADE, related_name='followeeId')
 
     def __str__(self):
