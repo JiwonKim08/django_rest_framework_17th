@@ -88,3 +88,24 @@
 쿼리문법이 어렵다면, [mySQL 정리](https://jwkdevelop.tistory.com/9)를 참고해보길 바란다. 모델링해보는 게 처음이라, 과제를 제출한 뒤 따로 모델링 수업을 들어봤다.
 아니나 다를까.. 관계 설정도 잘못했고 속성도 빼먹고 제약조건도 잘못 걸어뒀다.. 수정하려면 하루는 걸릴 것 같다^__^ 
 강의를 들은 후 [modeling 정리](https://jwkdevelop.tistory.com/65)에 정리해두었으니, 어렵다면 참고해보길 바란다.
+
+### URL: board/6
+### Method:post
+### Body: {"name": 사진게시판, "category": 취미, "school_id": 서강대학교}
+    [
+       {
+        "id": 7,
+        "created_at": "2023-04-04T23:25:47.053128+09:00",
+        "updated_at": "2023-04-04T23:25:47.053128+09:00",
+        "deleted_at": null,
+        "name": "사진게시판",
+        "category": "취미",
+        "school_id": 7
+       }
+    ]
+
+### filter
+![filter](https://user-images.githubusercontent.com/99666136/230626896-a6528897-2fe1-430f-9904-c3274a789a0c.png)
+
+### 회고
+filter 기능을 이해하는 데 시간이 오래걸렸던 것 같다. 구현하면서, 데이터 검색 기능에 활용해야겠다는 생각을 했다.
