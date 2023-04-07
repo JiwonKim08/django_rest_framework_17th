@@ -8,9 +8,9 @@ from .serializers import *
 class AllBoardView(APIView):
     def get(self,request,format=None): #모든 게시판
         try:
-            boardlists = Board.objects.all()
-            serializer = BoardSerializer(boardlists, many=True)
-            #리스트로 반환하는 boardlists
+            board_lists = Board.objects.all()
+            serializer = BoardSerializer(board_lists, many=True)
+            #리스트로 반환하는 board_lists
             return Response(serializer.data)
         except AttributeError as e:
             print(e)
@@ -45,41 +45,30 @@ class OneBoardView(APIView):
             return Response({"message: not exist"})
 '''
 
-
-#filter
+# filter
 from rest_framework import viewsets
-
 from .serializers import *
 from django_filters.rest_framework import FilterSet, filters
 from django_filters.rest_framework import DjangoFilterBackend
 
+
 class BoardFilter(FilterSet):
-    #필터 걸 속성
-    #school_id = filters.NumberFilter(field_name='school_id_id')
+    # 필터 걸 속성
+    # school_id = filters.NumberFilter(field_name='school_id_id')
     name = filters.CharFilter(field_name='name')
 
-    def filter_school_id(self, queryset): #필터 메서드로 구현
+    def filter_school_id(self, queryset):  # 필터 메서드로 구현
         filtered_queryset = filters.NumberFilter(field_name='school_id_id')
         return filtered_queryset
 
-
     class Meta:
-        model = Board #사용할 모델
-        fields = ['name','school_id'] #사용할 속성
+        model = Board  # 사용할 모델
+        fields = ['name', 'school_id']  # 사용할 속성
 
 
-#ModelViewSet을 상속함으로써 crud 기능이 5줄로 끝남
+# ModelViewSet을 상속함으로써 crud 기능이 5줄로 끝남
 class BoardViewSet(viewsets.ModelViewSet):
     serializer_class = BoardSerializer
     queryset = Board.objects.all()
     filter_backends = [DjangoFilterBackend]
     filterset_class = BoardFilter
-
-
-
-
-
-
-
-
-
