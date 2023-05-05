@@ -111,6 +111,7 @@ class LoginSerializer(serializers.ModelSerializer):
         access_token = str(token.access_token)
 
         data = {
+            'user_id':user_id,
             'user': user,
             'access_token': access_token,
             'refresh_token': refresh_token,

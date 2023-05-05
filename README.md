@@ -10,7 +10,7 @@
 - timetable: Lecture, My_lecture, Lecture_enrollment, Review
 
 
-### ERD
+# ERD
 ![ERD1](https://user-images.githubusercontent.com/99666136/229291041-66ce740c-63b7-4070-8ded-20b06452dbef.png)
 
 부가 설명:
@@ -44,8 +44,8 @@
 9. 정규화를 통해 잘 쪼개진 테이블은 읽기 기능을 희생시켜 쓰기 기능을 올린 것이다. join연산은 비싸기 때문이다. 그렇다고 정규화가 성능을 떨어뜨린다는 것은 아니다. 따라서, 인덱싱이나 캐시 기법을 쓰고도 데이터베이스의 느림이 인지된다면, 역정규화(테이블 수정)을 거친다.
 
 
-### 데이터 삽입, 조회, filter()
-
+# 데이터 삽입, 조회, filter()
+    
     python manage.py shell
 
     from account.models import School
@@ -103,10 +103,109 @@
         "school_id": 7
        }
     ]
-
-### filter
+ 
+# filter
 ![filter](https://user-images.githubusercontent.com/99666136/230626896-a6528897-2fe1-430f-9904-c3274a789a0c.png)
 
 ### 회고
 filter 기능을 이해하는데 시간이 오래걸렸던 것 같다. 구현하면서, 프로젝트 데이터 검색 기능에 활용해야겠다는 생각을 했다.
 router를 활용해 mapping하고자 하는 view를 등록해주어 쉽게 관리할 수 있었다. 전체적으로 재밌게 구현한 것 같다.👍
+
+
+# JWT token
+- 전체적인 흐름
+![image](https://user-images.githubusercontent.com/99666136/236412232-e004efa7-ccfb-4fcd-9ece-414e12602950.png)
+
+1. LoginSerializer에서 access token 과 refresh token을 발급해준 후, LoginView에서는 이미 발급된 토큰을 가져오기만 하는 방식으로 코드를 짰다.
+2. 이때 토큰 발행은, rest_framework_simplejwt.tokens 라이브러리를 사용해 .for_user로 토큰을 발행해준다.
+3. serializer에서 발행해둔 토큰을 가져와 response의 cookie에 담아 프론트로 보내준다.
+4. 쿠키는 다른 데이터와 함께 브라우저에 저장되기 때문에 보안 취약점이 될 수 있다.
+5. 따라서 JWT 토큰을 쿠키에 저장할 때에는 보안 강화를 위해, http-only, secure, 토큰 유효시간을 설정해준다.
+6. 프론트가 헤더에 access token을 넣어 api를 request에 담아 전송한다.
+7. 백엔드에서 request에서 access token을 꺼내 일치하는 user_id를 찾는다.(decode)
+8. user_id에 해당하는 내용을 데이터베이스에서 가져온 후, response에 담아 프론트로 전송한다.
+9. access token이 없다면, 프론트에서 access token 재발급을 위한 refresh token을 헤더에 담아 백엔드로 전송한다.
+10. refresh token에서 찾은 user_id를 기반으로 새로운 access token 발행 후 프론트로 전송한다.
+11. refresh token이 없다면, 로그인 페이지로 리다이렉트 시킨다.
+
+- (위 흐름은 코드내 주석처리를 따라가시면 편하게 이해하실 수 있습니다.)
+
+
+
+### 회원가입
+![image](https://user-images.githubusercontent.com/99666136/236413895-34410842-6c3d-48ae-8db2-5e8964f9995e.png)
+
+
+
+### 로그인
+![image](https://user-images.githubusercontent.com/99666136/236418543-c6ec656a-a1de-458c-8e55-fa9fa0605a33.png)
+
+
+
+### api요청(토큰을 통한 회원정보 반환)
+![image](https://user-images.githubusercontent.com/99666136/236414374-a27b9f67-056e-4017-a4b6-27cf7fd48f6a.png)
+
+
+프론트는 아래와 같은 코드로 get요청을 보낸다.
+```
+axios.get('/api/user', {
+  headers: {
+    'Authorization': `Bearer ${cookie}`
+  }
+})
+```
+
+### 겪은 오류와 해결과정
+1. 
+```
+class AuthView(APIView):
+    def get(self, request):
+        #access token을 프론트가 보낸 request에서 추출
+        print(request)
+        access_token = request.META['HTTP_AUTHORIZATION'].split()[1]
+        print(access_token)
+        #access token이 없다면 에러 발생
+        if not access_token:
+            return Response({"message": "access token 없음"}, status=status.HTTP_401_UNAUTHORIZED)
+
+        #access token이 있다면
+        #토큰 디코딩(유저 식별)
+        try:
+            #payload에서 user_id(고유한 식별자)를 추출
+            #payload={'user_id:1'}
+
+            payload = jwt.decode(access_token, SECRET_KEY, algorithms=['HS256']) #accesstoken 번호
+            user_id = payload.get('user_id') #1로 넣었는데 5가 나옴
+            print(user_id) #5
+            #해당 유저 아이디를 가지는 객체 user을 가져와
+            user = get_object_or_404(User, id=user_id) #id=5인 애를 가져와야 됨
+```
+에서 
+``` access_token = request.META['HTTP_AUTHORIZATION'].split()[1]```
+를 짜지 못했다. 프론트가 request의 헤더에 토큰을 넣어서 보내는데, 그 토큰이 어떤 이름으로 오는지 몰랐기 때문이다. 또한
+'~~ 토큰'으로 오길래 splite[1]로 뒤 토큰만 가져왔다.(현우오빠가 도와줌)
+
+2. 
+```user_id = payload.get('user_id') #1로 넣었는데 5가 나옴```에서 계속 에러가 났다.
+![image](https://user-images.githubusercontent.com/99666136/236416796-da6f77f9-47ea-4457-9d94-ce3723f3ebc4.png)
+그 이유는 내가 'id'와 'user_id'를 구분하지 못했기 때문이다. 프린트 문을 찍어보고 나서야 알게되었다.
+   (앞으로 id라는 변수명은 잘 안 쓸 생각이다^^)
+
+
+3. 
+```
+class User(AbstractBaseUser):
+    # DB에 저장할 데이터를 선언
+    school_id = models.ForeignKey(School, on_delete=models.CASCADE, related_name='schoolId', null=True) # 외래키 자동생성
+    user_id = models.CharField("사용자 계정", max_length=20, unique=True)
+```
+에서 school_id가 null이면 안된다길래, 외래키니까 null 허용해줬다.
+
+### 후기
+프론트할 때 jwt토큰을 구현해봤어서 전체적으로 쉽게 이해하며 코드를 짰다. 
+다만, cors에러 해결 코드에서 에러가 나는 상황인데 고쳐보겠다.
+챗지피티씨한테 많이 물어보면서 했는데, 그래도 아직은 내가 더 잘하는 것 같다.✨
+자세한 정리는 [JWT token 정리](https://jwkdevelop.tistory.com/72)에서 보면 된다!
+
+
+

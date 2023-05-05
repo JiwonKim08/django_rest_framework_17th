@@ -131,7 +131,7 @@ class AuthView(APIView):
                 user = get_object_or_404(id=user_id)
 
                 #새로운 access_token 발급
-                access_token = jwt.encode({"user_id": user.pk}, SECRET_KEY, algorithm='HS256')
+                access_token = jwt.encode({"user_id": user.pk}, SECRET_KEY, algorithm=['HS256'])
 
                 #access_token을 쿠키에 저장하여 프론트로 전송
                 response = Response(UserSerializer(instance=user).data, status=status.HTTP_200_OK)
