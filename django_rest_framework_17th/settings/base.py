@@ -46,8 +46,21 @@ INSTALLED_APPS = [
     'account',
     'timetable',
     'board',
+    'corsheaders'
 ]
 
+AUTH_USER_MODEL = 'account.User'
+
+
+REST_FRAMEWORK = {
+    'DEFAULT_PERMISSION_CLASSES': [
+        #'rest_framework.permissions.IsAuthenticated', 이거 true처리하면 회원가입못함
+        'rest_framework.permissions.AllowAny',
+    ],
+    'DEFAULT_AUTHENTICATION_CLASSES': [
+        'rest_framework_simplejwt.authentication.JWTAuthentication',  # JWTAuthentication 추가
+    ],
+}
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
@@ -57,8 +70,15 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'corsheaders.middleware.CorsMiddleware',
+    'django.middleware.common.CommonMiddleware',
 ]
 
+CORS_ORIGIN_ALLOW_ALL = True
+# CORS_ORIGIN_WHITELIST = [
+#     'localhost:3000',
+#     '127.0.0.1:3000'
+# ]
 ROOT_URLCONF = 'django_rest_framework_17th.urls'
 
 TEMPLATES = [
@@ -78,7 +98,7 @@ TEMPLATES = [
 ]
 
 WSGI_APPLICATION = 'django_rest_framework_17th.wsgi.application'
-
+REFRESH_TOKEN_SECRET_KEY=os.environ.get('REFRESH_TOKEN_SECRET_KEY')
 
 # Password validation
 # https://docs.djangoproject.com/en/3.0/ref/settings/#auth-password-validators

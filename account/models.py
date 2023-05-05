@@ -34,24 +34,26 @@ class School(CommonInfo):
 
 class UserManager(BaseUserManager):
     # 필수로 필요한 데이터를 선언
-    def create_user(self, username, password):
-        if not username:
-            raise ValueError('Users must have an username')
+    def create_user(self, email,user_id,nickname, password):
+        if not email:
+            raise ValueError('Users must have an email')
         if not password:
             raise ValueError('Password must have and password')
 
         user = self.model(
-            username=username,
+            email=email,
+            user_id = user_id,
+            nickname = nickname,
         )
         user.set_password(password)
         user.save(using=self._db)
         return user
 
     # python manage.py createsuperuser 사용 시 해당 함수가 사용됨
-    def create_superuser(self, username, email, password=None):
+    def create_superuser(self, user_id, email, password=None):
         user = self.create_user(
             email,
-            username=username,
+            user_id=user_id,
             password=password
         )
         user.is_admin = True
@@ -60,7 +62,7 @@ class UserManager(BaseUserManager):
 
 class User(AbstractBaseUser):
     # DB에 저장할 데이터를 선언
-    school_id = models.ForeignKey(School, on_delete=models.CASCADE, related_name='schoolId') # 외래키 자동생성
+    school_id = models.ForeignKey(School, on_delete=models.CASCADE, related_name='schoolId', null=True) # 외래키 자동생성
     user_id = models.CharField("사용자 계정", max_length=20, unique=True)
     email = models.EmailField("이메일", max_length=255, unique=True)
     profile_image = models.URLField(default="")  # url 형태로 저장하는게 더 좋음
@@ -78,8 +80,8 @@ class User(AbstractBaseUser):
     # 사용하지 않더라도 선언이 되어야함
     # USERNAME_FIELD와 비밀번호는 기본적으로 포함되어있음
 
-    REQUIRED_FIELDS = ['username'] #필수로 값을 받아야하는 필드
-    USERNAME_FIELD = 'username'
+    REQUIRED_FIELDS = ['password'] #필수로 값을 받아야하는 필드
+    USERNAME_FIELD = 'email'
 
     # custom user 생성 시 필요
     objects = UserManager()
@@ -89,7 +91,7 @@ class User(AbstractBaseUser):
 
     # 어드민 페이지에서 데이터에 제목을 어떻게 붙여줄 것인지 지정
     def __str__(self):
-        return f"{self.username} / {self.email} 님의 계정입니다"
+        return f"{self.user_id} / {self.email} 님의 계정입니다"
 
 
 class Freind(CommonInfo):

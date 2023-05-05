@@ -5,6 +5,7 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 from .serializers import *
 
+##CBV
 class AllBoardView(APIView):
     def get(self,request,format=None): #모든 게시판
         try:

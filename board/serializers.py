@@ -7,7 +7,7 @@ class BoardSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Board
-        fields = '__all__'
+        fields = '속성1, 속성2'
 
 class FixedboardSerializer(serializers.ModelSerializer):
     board_id = BoardSerializer
