@@ -205,7 +205,7 @@ class User(AbstractBaseUser):
 프론트할 때 jwt토큰을 구현해봤어서 전체적으로 쉽게 이해하며 코드를 짰다. 
 다만, cors에러 해결 코드에서 에러가 나는 상황인데 고쳐보겠다.
 챗지피티씨한테 많이 물어보면서 했는데, 그래도 아직은 내가 더 잘하는 것 같다.✨
-자세한 정리는 [JWT token 정리](https://jwkdevelop.tistory.com/72)에서 보면 된다!
+자세한 정리는 [JWT token 정리](https://jwkdevelop.tistory.com/72)에서 보면 된다!!
 
 
 
