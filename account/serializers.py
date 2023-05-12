@@ -91,7 +91,7 @@ class LoginSerializer(serializers.ModelSerializer):
         fields = ['user_id', 'password']
 
 
-    #아이디랑 비밀번호가 맞는지 확인
+
     def validate(self, data):
         user_id = data.get('user_id', None)
         password = data.get('password', None)
