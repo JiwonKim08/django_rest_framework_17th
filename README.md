@@ -195,7 +195,7 @@ class AuthView(APIView):
 3. 
 ```
 class User(AbstractBaseUser):
-    # DB에 저장할 데이터를 선언
+    # DB에 저장할 데이터를 선언!
     school_id = models.ForeignKey(School, on_delete=models.CASCADE, related_name='schoolId', null=True) # 외래키 자동생성
     user_id = models.CharField("사용자 계정", max_length=20, unique=True)
 ```
