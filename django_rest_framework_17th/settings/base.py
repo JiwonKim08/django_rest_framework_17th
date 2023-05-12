@@ -46,7 +46,6 @@ INSTALLED_APPS = [
     'account',
     'timetable',
     'board',
-    'corsheaders'
 ]
 
 AUTH_USER_MODEL = 'account.User'
@@ -70,15 +69,9 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-    'corsheaders.middleware.CorsMiddleware',
-    'django.middleware.common.CommonMiddleware',
+
 ]
 
-CORS_ORIGIN_ALLOW_ALL = True
-# CORS_ORIGIN_WHITELIST = [
-#     'localhost:3000',
-#     '127.0.0.1:3000'
-# ]
 ROOT_URLCONF = 'django_rest_framework_17th.urls'
 
 TEMPLATES = [
