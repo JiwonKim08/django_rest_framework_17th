@@ -3,7 +3,7 @@ from django.contrib.auth.forms import ReadOnlyPasswordHashField
 from django.utils.translation import ugettext_lazy as _
 from .models import User,UserManager
 
-#회원가입에서 사용되는 UserCreateForm을 수정
+#회원가입에서 사용되는 UserCreateForm을 수
 class UserCreateForm(forms.ModelForm):
     #회원가입(회원아이디, 이메일, 비밀번호
     user_id=forms.CharField(
