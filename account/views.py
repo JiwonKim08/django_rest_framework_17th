@@ -111,7 +111,7 @@ class AuthView(APIView):
             #프론트로 200과 함께 재전송
             return Response(serializer.data, status=status.HTTP_200_OK)
 
-         #Access token 예외
+         #Access token 예
         except jwt.exceptions.InvalidSignatureError:
             #access_token 유효하지 않음
             return Response({"message": "유효하지 않은 access token"}, status=status.HTTP_401_UNAUTHORIZED)
