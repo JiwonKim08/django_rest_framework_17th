@@ -208,4 +208,64 @@ class User(AbstractBaseUser):
 자세한 정리는 [JWT token 정리](https://jwkdevelop.tistory.com/72)에서 보면 된다!!
 
 
+# AWS : EC2, RDS & Docker & Github Action
+
+![image](https://github.com/Bakery-EFUB/Bakery-Back/assets/99666136/18c639e3-ba83-4763-8c4d-821572fd2f80)
+
+### Docker
+Docker란 가상 컨테이너 기술로, 어떤 OS에서도 같은 환경을 만들어줍니다.
+그럼 이 Docker를 어떻게 배포할 수 있을까요?
+Github Action은 docker-compose.prod.yaml 파일을 실행시켜, 
+``` sh /home/ubuntu/srv/ubuntu/config/scripts/deploy.sh```로 들어가고, 
+``` sudo docker-compose -f /home/ubuntu/srv/ubuntu/docker-compose.prod.yml up --build -d```를
+실행시킵니다. 그러면 이제 EC2서버가 build되고 실행됩니다.
+
+- 여기서 EC2랑 어떻게 연결되는 건가요? docker-compose.prod.yaml을 보면
+``` echo "${{ secrets.ENV_VARS }}" >> .env```
+   라는 코드가 있습니다. 여기서 EC2와 연결됩니다.
+- 그럼 Gihub Action이 배포하는 코드는 어디에 있나요? 
+``` Gihub Action는 sudo docker-compose -f /home/ubuntu/srv/ubuntu/docker-compose.prod.yml up --build -d```를 실행한다고 했죠.
+  여기서 nginx와 gunicorn을 통해 배포합니다. 
+- docker-compose.yml파일과 docker-compose.prod.yml파일의 차이점은 무엇인가요? docker-compose.yml 파일은 로컬 개발 및 테스트 환경에서 사용되는 Docker Compose 설정 파일이고, docker-compose.prod.yml 파일은 프로덕션(운영) 환경에서 사용되는 Docker Compose 설정 파일입니다.
+
+
+### EC2 
+EC2는 AWS에서 제공하는 성능,용량 등을 유동적으로 사용할 수 있는 가상 서버입니다. 저희는 이 서버에 Django를 배포하는 것이죠.
+그렇다면 EC2를 왜 사용하는 걸까요?
+외부에서 본인이 만든 서비스에 접근하려면 24시간 작동하는 서버가 필요하겠죠. 하지만 저희는 집 pc를 24시간동안 구동시킬 수 없으니 서버를 빌리는 것입니다.
+- 보안 그룹 생성
+![image](https://github.com/Bakery-EFUB/Bakery-Back/assets/99666136/33b4259a-830d-4579-bddc-737921bb3513)
+
+EC2에서 보안그룹 생성이 정말 중요합니다. 위 사진처럼 인바운드에 서버에 접근 가능한 서버,포트,ip를 설정해줍니다.
+여기서 ssh란 리눅스 프로토콜로 나만 볼 수 있어야 합니다. 다른 사람이 내 도커에 접근하면 안 되니까.. (그래서 저렇게 소스를 0.0.0.0/0으로 하면 안되고,,, 본인 집 ip로 쓰길 바란다.)
+클라이언트는 Http 프로토콜로 들어올 것이니 0.0.0.0/0으로 할당해줍니다.
+
+- pem키(비밀키)는 매칭되는 공개키를 가지고 있습니다. 그 공개키를 EC2 인스턴스가 가지고 있기때문에, pem키가 유출되는 순간 서버에서 가상화폐가 채굴되는 것을 볼 수 있습니다.
+- 탄력적 ip란 AWS의 고정 ip를 말합니다. 요금을 아끼기 위해 잠깐 인스턴스를 중지하고 다시 시작하면 ip가 바뀝니다. 이걸 방지하기 위해 고정 ip를 할당하는 것입니다. (저는 안 했다가 바뀐지도 몰라서 1시간을 날렸답니다^^..)
+- 이때, 탄력적 ip를 할당하고 바로 EC2에 연결하지 않을 시 비용 청구가 되며, 인스턴스를 삭제할 때도 탄력적 ip를 삭제하지 않으면 비용 청구가 되니 유의하시길..
+- EC2 서버에 접속하기 위해서 window는 os환경을 Linux로 만들어주어야 합니다. 이때 putty를 사용한다고는 하는데, 아직 잘 몰라서 패스하겠습니다!
+
+
+### RDS
+RDS는 AWS에서 지원하는 클라우기반 관계형 데이터베이스입니다. 
+- 파라미터 그룹 생성
+time_zone, Character set을 변경해 데이터베이스에 담기는 도메인을 넓혀줍니다. 그 후, 데이터베이스에 연결합니다. 이때, 간혹 파라미터 그룹이 제대로 반영되지 않을 때가 있으니 재부팅해줍니다. (저는 이걸 안해서 1시간을 날렸답니다^^..)
+그 후, mySQL workbench에 연결해줍니다. 
+
+### 과제
+![image](https://github.com/Bakery-EFUB/Bakery-Back/assets/99666136/c88edf34-8fbc-4c1a-b4ce-137617405da9)
+잘 연결되었습니다!!
+
+### 오류
+- 인스턴스 생성시 AMI선택을 ubuntu로 안하고 Amazon Linux로 선택해, CEOS에서 준 'deploy.yml'과 달라 4시간을 날렸다. => 해결
+- .env.prod를 깃허브에 올려버렸다 => 해결
+
+### 회고
+코드 짜는 것보다 더 어려웠다. 1부터 10까지 다 모르는 용어라, 엄청 생소했다. (예지랑 현우오빠 없었으면, 난 울었을 것 같다.)
+프리티어로 가입했지만, 돈 나갈까봐 두려워서 엄청 꼼꼼히 찾아본 것 같다. 도커랑 ec2가 어떻게 연결되는 건지, github action은 또 어떻게 배포를 해준다는 건지 이제는 좀 알 것 같다.
+
+
+
+
+
 

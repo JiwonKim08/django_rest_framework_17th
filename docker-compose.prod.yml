@@ -1,4 +1,6 @@
 #docker-compose.prod.yml
+#깃허브액션이 서버에서 실행시키는 파일
+#nginx와 gunicorn을 통해
 version: '3'
 services:
 

@@ -1,3 +1,5 @@
+#도커와 서버를 연결
+
 name: Deploy to EC2
 
 on:
@@ -44,3 +46,4 @@ jobs:
         key: ${{ secrets.KEY }}
         script: |
           sh /home/ubuntu/srv/ubuntu/config/scripts/deploy.sh
+          
