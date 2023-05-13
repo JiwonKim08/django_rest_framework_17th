@@ -1,7 +1,7 @@
 # CEOS 17기 백엔드 스터디
 
 ### 서비스 설명
-에브리타임 클론 코딩으로, 앱은 크게 accout, board, timetable로 나누었다.
+에브리타임 클론 코딩으로, 앱은 크게 accout, board, timetable로 나누었다.!
 
 구현 모델:
 - common: CommonInfo
