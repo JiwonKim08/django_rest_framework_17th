@@ -264,7 +264,48 @@ time_zone, Character set을 변경해 데이터베이스에 담기는 도메인�
 코드 짜는 것보다 더 어려웠다. 1부터 10까지 다 모르는 용어라, 엄청 생소했다. (예지랑 현우오빠 없었으면, 난 울었을 것 같다.)
 프리티어로 가입했지만, 돈 나갈까봐 두려워서 엄청 꼼꼼히 찾아본 것 같다. 도커랑 ec2가 어떻게 연결되는 건지, github action은 또 어떻게 배포를 해준다는 건지 이제는 좀 알 것 같다.
 
-### 회고
+
+
+# AWS : https 인증
+
+
+
+### 로드 밸랜서(ALB)
+- 로드 밸런서란 서버에 가해지는 트래픽을 여러대의 서버에게 균등하게 분산시켜주는 역할을 한다.
+- 비용 절감과 무중단 서비스 제공에서 장점을 가진다.
+
+![image](https://github.com/Bakery-EFUB/bakery_front/assets/99666136/2e43cc29-457d-4064-b8c2-b4ecab72c663)
+
+1. 리스너: 사용자에게서 요청을 받아들여 이 요청을 처리할 적절한 대상그룹으로 전달
+2. 규칙: HTTP관련 정보를 해석한 뒤,어떤 대상그룹에 전달할지 판단되는 기준
+3. 대상그룹: 요청을 처리할 EC2가 모여있는 대상그룹
+
+- HTTPS 리스너를 사용하기 위해서는 SSL 인증서가 필수. HTTP 리스너의 포트는 기본적으로 80이며 HTTPS 리스너의 포트는 기본적으로 443이다.
+- 상태확인(health checks)은 타겟그룹에 원하는 경로와 포트를 설정하여 HTTP 또는 HTTPS로 잘 요청이 오는지 확인한다.
+- ALB의 대상그룹은 HTTP 또는 HTTPS만 허용한다. 이는 대상그룹에 속한 EC2가 해당 protocol만을 받아들인다는 뜻이다.
+
+ 
+### 에러(400,502)
+cf. 제가 시간투자를 안 한게 아니라,, 정말 24시간 넘게 해결해보려고 노력했지만, 결국 못했습니다,,,
+
+1. putty를 통한 ssh 접속 후 docker의 log 확인
+![image](https://github.com/Bakery-EFUB/bakery_front/assets/99666136/c8bbea78-c89f-4eb9-ad26-bc9b01d2a636)
+=> docker는 잘 돌아간다.
+
+2. nginx의 실행여부 확인
+![image](https://github.com/Bakery-EFUB/bakery_front/assets/99666136/8c3848de-982e-4f6d-bb53-f13566c572a5)
+=> nginx도 잘 돌아간다.
+
+3. env파일의 수정
+ALLOWED_HOSTS = ['0.0.0.0']를 하면 400에러가 나고, private_IP를 할당하면 502에러가 난다.
+
+4. 인스턴스 설정부터 재작업
+인스턴스를 삭제하고 처음부터 다시 작업했다.
+![image](https://github.com/Bakery-EFUB/bakery_front/assets/99666136/8be85360-dd30-4ae0-ba18-b7cad6be087c)
+퍼블릭 도메인 주소로 직접 host를 하면 잘되나, 구매한 도메인만 연결하면 다시 400에러가 발생한다.
+
+- 죄송합니다. 도저히 모르겠어요,,,😭(설정 그대로 다 따라했습니다.)
+
 
 
 
