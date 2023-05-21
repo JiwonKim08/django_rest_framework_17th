@@ -285,8 +285,7 @@ time_zone, Character set을 변경해 데이터베이스에 담기는 도메인�
 - ALB의 대상그룹은 HTTP 또는 HTTPS만 허용한다. 이는 대상그룹에 속한 EC2가 해당 protocol만을 받아들인다는 뜻이다.
 
  
-### 에러(400,502)
-cf. 제가 시간투자를 안 한게 아니라,, 정말 24시간 넘게 해결해보려고 노력했지만, 결국 못했습니다,,,
+### 에러(400,502,응답 없음)
 
 1. putty를 통한 ssh 접속 후 docker의 log 확인
 ![image](https://github.com/Bakery-EFUB/bakery_front/assets/99666136/c8bbea78-c89f-4eb9-ad26-bc9b01d2a636)
@@ -304,7 +303,18 @@ ALLOWED_HOSTS = ['0.0.0.0']를 하면 400에러가 나고, private_IP를 할당�
 ![image](https://github.com/Bakery-EFUB/bakery_front/assets/99666136/8be85360-dd30-4ae0-ba18-b7cad6be087c)
 퍼블릭 도메인 주소로 직접 host를 하면 잘되나, 구매한 도메인만 연결하면 다시 400에러가 발생한다.
 
-- 죄송합니다. 도저히 모르겠어요,,,😭(설정 그대로 다 따라했습니다.)
+5. route53의 재설정
+![image](https://github.com/Bakery-EFUB/Bakery-Back/assets/99666136/e38ff404-04f3-46e6-9d20-d4b91af3346e)
+여기서 주황색 형광펜의 ceos.이 보이나요? 이걸 빈칸으로 뒀어야 했는데, 임의로 설정해서 에러가 났던 것이다.
++ 빨간색으로 설정해둔 것을 alb로 연결하지 않았다.
+
+### 에러 해결
+![image](https://github.com/Bakery-EFUB/Bakery-Back/assets/99666136/49b72c47-4d99-4254-bafb-02f4900dc8da)
+
+
+### 후기
+설정하나 잘 못해서 시간을 엄청 날렸다.... 덕분에 설정로직을 거의 다 외워버린 것 같다 ㅎ 저 도와주신 분들,, 너무 감사합니다. 운영진 짱짱 멋져요❣
+
 
 
 
